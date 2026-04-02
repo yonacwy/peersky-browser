@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/png" href="peersky://static/assets/favicon.ico" />
+<title>P2P Apps</title>
+<style>
+  @import url("browser://theme/vars.css");
+  body {
+    background-color: var(--browser-theme-background);
+    color: var(--browser-theme-text-color);
+    font-family: var(--browser-theme-font-family, Arial, sans-serif);
+    margin: 0;
+    padding: 20px;
+  }
+</style>
+<body>
+  <div id="app-list">
+    Loading P2P apps…
+  </div>
+
+  <script type="module">
+    import "peersky://static/js/p2p-app-manager.js";
+    const container = document.getElementById('app-list');
+    container.textContent = '';
+    container.appendChild(document.createElement('p2p-app-manager'));
+  </script>
+</body>

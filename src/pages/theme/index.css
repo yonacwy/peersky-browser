@@ -1,0 +1,1262 @@
+@import url('browser://theme/vars.css');
+
+:root {
+  --browser-theme-font-family: Arial, sans-serif;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: var(--browser-theme-font-family, Arial, sans-serif);
+  overflow: hidden;
+}
+
+input, button, textarea, select, select *, option  {
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  background: none;
+  padding:0.25em;
+  border-radius: 0.25em;
+}
+
+#navbox {
+  display: flex;
+  align-items: center;
+  background-color: var(--peersky-nav-background);
+  gap: 8px;
+  padding: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.match-count {
+  margin: 0 5px;
+  font-size: 12px;
+  color: var(--peersky-nav-button-color);
+  min-width: 60px;
+  text-align: center;
+}
+
+.nav-button {
+  display: inline-flex;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--peersky-nav-button-color);
+  transition: color 0.2s ease-in-out;
+  -webkit-app-region: no-drag;
+}
+
+.nav-button.active {
+  color: var(--peersky-nav-button-active);
+}
+
+.nav-button:disabled {
+  color: var(--peersky-nav-button-inactive);
+  cursor: not-allowed;
+}
+
+.nav-button:hover:not(:disabled) {
+  color: var(--peersky-nav-button-hover);
+}
+
+.svg-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.url-bar-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--peersky-background-url-input);
+  font-family: var(--browser-theme-font-family, Arial, sans-serif);
+  border: none;
+  margin-left: 6px;
+  margin-right: 6px;
+  color: var(--browser-theme-text-color);
+  font-size: medium;
+  border-radius: 8px;
+  width: 60%;
+}
+
+#url {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 0.4rem 10px;
+  color: var(--browser-theme-text-color);
+  font-size: medium;
+  font-family: inherit;
+  outline: none;
+  -webkit-app-region: no-drag;
+}
+
+.inside-urlbar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--peersky-nav-button-color);
+}
+
+.url-bar-wrapper:hover {
+  background-color: var(--peersky-background-url-input, #ffffff);
+  box-shadow: 0 0 4px -1px #0a0a0a;
+}
+.url-bar-wrapper:focus-within {
+  background-color: var(--peersky-background-url-input, #ffffff);
+  box-shadow: 0 0 4px -1px #0a0a0a;
+  outline: none;
+}
+
+/* Autocomplete Dropdown Styles */
+.url-autocomplete-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 0;
+  background-color: var(--peersky-nav-background);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  max-height: 360px;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+  border: 1px solid var(--settings-border);
+}
+
+.url-autocomplete-dropdown.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.autocomplete-item {
+  display: flex;
+  align-items: center;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+  gap: 12px;
+  border-bottom: 1px solid var(--settings-border);
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-item:first-child {
+  border-radius: 10px 10px 0 0;
+}
+
+.autocomplete-item:last-child {
+  border-radius: 0 0 10px 10px;
+}
+
+.autocomplete-item:only-child {
+  border-radius: 10px;
+}
+
+.autocomplete-item:hover {
+  background-color: var(--settings-bg-secondary);
+}
+
+.autocomplete-item.selected {
+  background-color: var(--browser-theme-primary-highlight);
+  color: var(--browser-theme-background);
+}
+
+.autocomplete-item.selected .autocomplete-title {
+  color: var(--browser-theme-background);
+}
+
+.autocomplete-item.selected .autocomplete-url {
+  color: var(--browser-theme-background);
+  opacity: 0.8;
+}
+
+.autocomplete-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--peersky-nav-button-color);
+  opacity: 0.7;
+}
+
+.autocomplete-item.selected .autocomplete-icon {
+  color: var(--browser-theme-background);
+  opacity: 1;
+}
+
+.autocomplete-content {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.autocomplete-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--browser-theme-text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+
+.autocomplete-url {
+  font-size: 12px;
+  color: var(--settings-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Scrollbar styling for autocomplete dropdown */
+.url-autocomplete-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.url-autocomplete-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.url-autocomplete-dropdown::-webkit-scrollbar-thumb {
+  background-color: var(--peersky-nav-button-inactive);
+  border-radius: 3px;
+}
+
+.url-autocomplete-dropdown::-webkit-scrollbar-thumb:hover {
+  background-color: var(--browser-theme-primary-highlight);
+}
+
+find-menu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0.3em;
+  border-radius: 6px;
+  font-size: medium;
+  background-color: var(--peersky-background-find-menu);
+  position: fixed;
+  top: 88px;
+  right: 20px;
+  z-index: 1001;
+}
+
+.find-menu-input {
+  flex: 1;
+  padding: 0.5em;
+  border: none;
+  font-size: inherit;
+  font-family: inherit;
+  background-color: var(--peersky-background-find-menu);
+  color: var(--browser-theme-text-color);
+  outline: none;
+}
+
+.find-menu-button {
+  padding: 0.5em;
+  border: none;
+  background: none;
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  color: var(--peersky-nav-button-color);
+}
+
+.find-menu-button:hover {
+  color: var(--peersky-nav-button-hover);
+}
+
+.hidden {
+  display: none !important;
+}
+
+.tabbar {
+  display: flex;
+  align-items: center;
+  background-color: var(--peersky-nav-background);
+  width: 100%;
+  height: 44px;
+  padding: 0 6px;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+.tab-container {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;;
+  max-width: 100%;
+  min-width: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  position: relative;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  min-width: 48px !important;
+  max-width: 240px;
+  width: 0;
+  flex: 1 1 auto;
+  height: 32px;
+  padding: 0 8px;
+  margin: 4px 2px;
+  background-color: transparent;
+  color: var(--browser-theme-text-color);
+  border-radius: 6px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  overflow: visible;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  user-select: none;
+  position: relative;
+  -webkit-app-region: no-drag;
+  box-sizing: border-box;
+
+  transition: 
+    min-width 0.45s cubic-bezier(0.25, 0.8, 0.25, 1),
+    max-width 0.45s cubic-bezier(0.25, 0.8, 0.25, 1),
+    margin 0.45s cubic-bezier(0.25, 0.8, 0.25, 1),
+    padding 0.45s cubic-bezier(0.25, 0.8, 0.25, 1),
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.25s ease,
+    background-color 0.2s ease,
+    box-shadow 0.25s ease;
+
+  transform-origin: left center;
+  will-change: transform, width, opacity;
+}
+
+.tab.opening {
+  min-width: 0 !important;
+  max-width: 0 !important;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: 0;
+  margin-right: 0;
+  opacity: 0;
+  flex: 0 0 0;
+  transform: translateX(-28px) scale(0.9);
+  filter: blur(6px);
+}
+
+.tab:not(.opening) {
+  filter: blur(0);
+}
+
+.tab.closing {
+  min-width: 0 !important;
+  max-width: 0 !important;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: 0;
+  margin-right: 0;
+  opacity: 0;
+  flex: 0 0 0;
+  transform: translateX(-40px) scale(0.85);
+  filter: blur(8px);
+  transition: all 0.25s cubic-bezier(0.4, 0, 1, 1);
+}
+
+.tab:hover:not(.active):not(.dragging) {
+  background: 
+    radial-gradient(
+      circle 80px at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+      rgba(255, 255, 255, 0.05),
+      transparent
+    ), 
+    var(--peersky-background-url-input, #ffffff);
+}
+
+.tab.active {
+  background-color: var(--peersky-background-url-input, #ffffff);
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px var(--settings-border);
+}
+
+.tab:not(.active) + .tab:not(.active)::before {
+  content: '';
+  position: absolute;
+  left: -2px;
+  top: 25%;
+  height: 50%;
+  width: 1px;
+  background-color: var(--settings-border); 
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  opacity: 0.3;
+}
+.tab:not(.active):not(:has(+ .tab))::after {
+  content: '';
+  position: absolute;
+  right: -2px;
+  top: 25%;
+  height: 50%;
+  width: 1px;
+  background-color: var(--settings-border); 
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  opacity: 0.3;
+}
+
+.tab-container:not(:has(.tab.dragging)) .tab:not(.active):not(:has(+ .tab)):hover::after {
+  opacity: 0;
+}
+
+.tab-container:not(:has(.tab.dragging)) .tab:not(.active):hover + .tab:not(.active)::before,
+.tab-container:not(:has(.tab.dragging)) .tab:not(.active) + .tab:not(.active):hover::before {
+  opacity: 0;
+}
+
+.tab.dragging {
+  opacity: 0.9;
+  background-color: var(--peersky-background-url-input, #ffffff) !important;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  border-radius: 8px; 
+  
+  position: absolute !important;
+  pointer-events: none;
+  transition: none !important;
+  transform: scale(1.05) translateY(-2px) !important;
+}
+
+.tab-container::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.tab-title {
+  flex: 1 1 0%;
+  min-width: 0 !important;
+  max-width: 100%;
+  width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 8px;
+  -webkit-app-region: no-drag;
+  font-size: 15px;
+  font-family: var(--browser-theme-font-family, Arial, sans-serif);
+  color: var(--peersky-nav-button-color);
+  order: 2;
+}
+
+.close-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--peersky-nav-button-color);
+  -webkit-app-region: no-drag;
+  margin-left: 6px;
+  order: 3;
+  transition: 
+    background-color 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.tab:hover .close-tab,
+.tab.active .close-tab {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.close-tab:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--peersky-nav-button-hover);
+}
+
+.add-tab-button {
+  display: flex;
+  flex: 0 0 auto;
+  align-self: center;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  margin: 6px 8px 0 0;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--peersky-nav-button-color);
+  -webkit-app-region: no-drag;
+}
+
+.add-tab-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--peersky-nav-button-hover);
+}
+
+.header-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 50px;
+  width: 100%;
+  position: fixed; 
+  top: 38px;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background-color: var(--peersky-nav-background);
+  -webkit-app-region: drag;
+}
+
+.titlebar {
+  display: flex;
+  height: 38px;
+  background-color: var(--peersky-nav-background);
+  -webkit-app-region: drag;
+  user-select: none;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.app-icon {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-app-region: drag;
+}
+
+.tabbar-container {
+  flex: 1 1 auto;;
+  -webkit-app-region: no-drag;
+  min-width: 0;
+  overflow: hidden;;
+}
+
+.window-controls {
+  display: flex;
+  -webkit-app-region: no-drag;
+}
+
+.window-control {
+  width: 46px;
+  height: 38px;
+  border: none;
+  background: none;
+  color: var(--peersky-nav-button-color);
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.window-control:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.window-control.close:hover {
+  background-color: #e81123;
+  color: white;
+}
+
+.tabbar {
+  width: 100%;
+  height: 38px;
+  background: none;
+  -webkit-app-region: drag;
+}
+
+.tab {
+  height: 32px;
+  margin-top: 6px;
+  margin-bottom: 0;
+  -webkit-app-region: no-drag;
+}
+
+.webview-container {
+  position: fixed;
+  top: 88px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: calc(100vh - 88px);
+  overflow: hidden;
+  display: flex;
+}
+
+.tab-webview {
+  width: 100%;
+  height: 100%;
+  border: none;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Apply solid white background only to external web content (not internal peersky:// pages) */
+.tab-webview[src^="https://"],
+.tab-webview[src^="http://"],
+.tab-webview[src^="ipfs://"],
+.tab-webview[src^="ipns://"],
+.tab-webview[src^="hyper://"] {
+  background-color: #ffffff;
+}
+
+.tab-webview[style*="display: block"] {
+  display: flex !important;
+  flex: 1;
+}
+
+.tab-webview {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: none;
+}
+
+.tab-favicon {
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-right: 8px;
+  flex-shrink: 0;
+  order: 1;
+}
+
+.p2p-indicator {
+  font-size: 12px;
+  margin-right: 8px;
+  color: var(--peersky-nav-button-color);
+  opacity: 0.7;
+  user-select: none;
+  line-height: 1;
+  display: inline-block;
+  order: 1;
+}
+
+.tab.loading .tab-title::before {
+  content: url("peersky://static/assets/svg/reload-spinner.svg");
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 6px;
+  vertical-align: middle;
+  filter: brightness(0) saturate(100%) invert(88%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);
+}
+
+.tab.loading .tab-favicon[style*="display: block"] + .tab-title::before {
+  display: none;
+}
+
+.tab.loading {
+  color: var(--peersky-nav-button-active);
+}
+
+.tab-context-menu {
+  background: var(--settings-card-bg);
+  border: 1px solid var(--settings-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  padding: 4px 0;
+  min-width: 180px;
+  font-size: 13px;
+  z-index: 10000;
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  color: var(--browser-theme-text-color);
+  transition: background-color 0.1s ease;
+}
+
+.context-menu-item:hover {
+  background-color: var(--browser-theme-primary-highlight);
+  color: var(--browser-theme-background);
+}
+
+.context-menu-item .menu-icon {
+  margin-right: 8px;
+  width: 16px;
+  font-size: 12px;
+  /* Use theme-aware icon color */
+  filter: var(--context-menu-icon-filter);
+}
+
+.context-menu-item:hover .menu-icon {
+  /* Use theme-aware hover icon color */
+  filter: var(--context-menu-icon-hover-filter);
+}
+
+.context-menu-item[data-action="duplicate"] .menu-icon {
+  font-size: 11px;
+}
+
+.context-menu-item[data-action="move-to-new-window"] .menu-icon {
+  font-size: 11px;
+}
+
+.context-menu-item[data-action="new-tab-right"] .menu-icon {
+  font-size: 11px;
+}
+
+.context-menu-separator {
+  height: 1px;
+  background: var(--peersky-nav-border-color);
+  margin: 4px 0;
+}
+
+.tab.pinned {
+  background: var(--browser-theme-primary-highlight);
+  border: 3px solid var(--browser-theme-secondary-highlight); /* Add bottom border */
+  min-width: 120px;
+  position: relative;
+  color: var(--browser-theme-background);
+}
+
+.tab.pinned .tab-title {
+  color: var(--browser-theme-background);
+}
+
+.tab.pinned .close-tab {
+  color: var(--browser-theme-background);
+}
+
+.tab.pinned::before {
+  display: none;
+}
+
+.tab.muted {
+  opacity: 0.7;
+}
+
+.tab.muted .tab-title {
+  font-style: italic;
+}
+
+.mute-indicator {
+  opacity: 0.8;
+  font-size: 12px;
+}
+
+/* Tab Group Styles */
+.tab-group-header {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 12px;
+  margin-top: 8px;
+  border-radius: 12px;
+  color: white;
+  font-size: 12px;
+  cursor: default;
+  user-select: none;
+  -webkit-app-region: no-drag;
+}
+.tab-group-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  user-select: none;
+}
+.tab-group-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+.tab-group-toggle:active {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+.tab-group-title {
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 8px;
+}
+
+.tab-group-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.tab-group-edit, .tab-group-close {
+  cursor: pointer;
+  opacity: 0.7;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.tab-group-edit:hover, .tab-group-close:hover {
+  opacity: 1;
+}
+
+/* Tab styling for grouped tabs */
+.tab[data-group-id] {
+  /* margin-left: 8px; */
+  border-radius: 12px;
+}
+
+/* Group Edit Dialog */
+.tab-group-dialog {
+  position: absolute;
+  z-index: 10001;
+  background: var(--browser-theme-background);
+  border: 1px solid var(--peersky-nav-border-color);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+  animation: slideIn 0.2s ease-out;
+  max-width: 320px;
+  width: 90%;
+}
+
+.tab-group-dialog h1 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 16px;
+  color: var(--browser-theme-text-color);
+}
+
+.dialog-row {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.dialog-row input {
+  flex-grow: 1;
+  padding: 6px;
+  background: var(--peersky-background-url-input);
+  border: 1px solid var(--peersky-nav-border-color);
+  color: var(--browser-theme-text-color);
+  transition: border-color 0.2s;
+}
+
+.dialog-row input:focus {
+  border-color: var(--peersky-nav-button-active);
+}
+
+.color-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.color-option {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.color-option:hover {
+  transform: scale(1.1);
+}
+
+.color-option.selected {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 2px var(--peersky-nav-button-active);
+}
+
+.dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.dialog-buttons button {
+  padding: 6px 12px;
+  background: var(--peersky-nav-background);
+  border: 1px solid var(--peersky-nav-border-color);
+  color: var(--browser-theme-text-color);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.dialog-buttons button:hover {
+  background: var(--peersky-nav-button-hover);
+}
+
+.dialog-buttons button#group-edit-save {
+  background-color: var(--browser-theme-primary-highlight);
+  color: var(--browser-theme-background);
+  border: 1px solid var(--browser-theme-primary-highlight);
+}
+
+.dialog-buttons button#group-edit-save:hover {
+  background-color: var(--browser-theme-secondary-highlight);
+  border-color: var(--browser-theme-secondary-highlight);
+}
+/* Dialog overlay */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Submenu styling */
+.tab-context-submenu {
+  position: fixed;
+  background: var(--browser-theme-background);
+  border: 1px solid var(--peersky-nav-border-color);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  padding: 4px 0;
+  min-width: 180px;
+  font-size: 13px;
+  z-index: 10001;
+}
+
+.has-submenu .submenu-arrow {
+  margin-left: auto;
+  padding-left: 8px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translate(-50%, -60%); opacity: 0; }
+  to { transform: translate(-50%, -50%); opacity: 1; }
+}
+
+.tab-hover-card {
+  background: rgba(15, 15, 15, 0.85); /* Semi-transparent dark background */
+  backdrop-filter: blur(20px) saturate(180%); /* Glass blur effect */
+  -webkit-backdrop-filter: blur(20px) saturate(180%); /* Safari support */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle glass border */
+  border-radius: 12px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset; /* Inner glow */
+  padding: 0;
+  font-size: 12px;
+  color: var(--browser-theme-text-color);
+  max-width: 300px;
+  min-width: 200px;
+  animation: fadeInCard 0.3s ease-out;
+  pointer-events: none;
+  overflow: hidden;
+  position: relative;
+}
+
+.tab-hover-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60%; /* Cover top part only */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  border-radius: 12px 12px 0 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.tab-hover-card > div {
+  position: relative;
+  z-index: 3;
+  padding: 12px;
+}
+
+.hover-card-title {
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: rgba(255, 255, 255, 0.95);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 4;
+}
+
+.hover-card-url {
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 2px;
+  word-break: break-all;
+  font-family: monospace;
+  font-size: 11px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 4;
+}
+
+.hover-card-separator {
+  height: 1px;
+  position: relative;
+  z-index: 4;
+}
+
+.hover-card-memory {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  margin-top: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 4;
+}
+
+.hover-card-memory::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
+  background-image: url('peersky://static/assets/svg/speedometer2.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5)) brightness(0) saturate(100%) invert(65%);
+}
+
+/* Enhanced fade-in animation */
+@keyframes fadeInCard {
+  from { 
+    opacity: 0; 
+    transform: translateY(-8px) scale(0.95);
+    backdrop-filter: blur(0px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1);
+    backdrop-filter: blur(20px);
+  }
+}
+
+#settings {
+  margin-left: auto;
+}
+
+/* Extension Browser Action Styles */
+.extension-icons-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 6px;
+}
+
+/* Visual separator between puzzle button and pinned extensions */
+.extension-separator {
+  width: 1px;
+  height: 16px;
+  background-color: var(--peersky-nav-button-inactive);
+  opacity: 0.3;
+  margin: 0 8px;
+  flex-shrink: 0;
+  animation: separatorFadeIn 0.12s ease;
+  transform-origin: center;
+}
+
+@keyframes separatorFadeIn {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 0.3;
+    transform: scaleX(1);
+  }
+}
+
+.extension-action-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 2px;
+  opacity: 1;
+  transform: scale(1);
+  -webkit-app-region: no-drag;
+  color: var(--peersky-nav-button-color);
+}
+
+/* Smooth animations for pinned extensions appearing/disappearing */
+.extension-action-btn.pinned-extension {
+  animation: extensionPinIn 0.12s ease;
+  background: transparent !important;
+  padding: 2px !important;
+}
+
+.extension-action-btn.pinned-extension:hover {
+  background: transparent !important;
+}
+
+.extension-action-btn.pinned-extension:active {
+  background: transparent !important;
+}
+
+.extension-action-btn.unpinning {
+  animation: extensionPinOut 0.12s ease forwards;
+}
+
+@keyframes extensionPinIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes extensionPinOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8) translateY(-2px);
+  }
+}
+
+.extension-action-btn:hover {
+  background-color: var(--peersky-nav-button-hover);
+  color: var(--peersky-nav-button-hover);
+}
+
+.extension-action-btn:active {
+  background-color: var(--peersky-nav-button-active);
+  color: var(--peersky-nav-button-active);
+}
+
+.extension-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  border-radius: 0;
+  background: transparent !important;
+  mix-blend-mode: normal;
+}
+
+/* Inline SVG inside toolbar extension icons should follow theme color */
+.extension-action-btn .extension-icon svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  display: block;
+}
+
+
+.extension-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background-color: #dc3545;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-sizing: border-box;
+  text-align: center;
+  line-height: 1;
+}
+
+.vertical-tabs-layout {
+  display: flex !important;
+}
+
+.vertical-tabs-layout .webview-container {
+  margin-left: 48px !important; /* Updated to match collapsed width */
+  width: calc(100% - 48px) !important;
+  transition: margin-left 0.3s ease, width 0.3s ease !important;
+}
+
+/* Add smooth transitions for the layout changes */
+body {
+  transition: all 0.3s ease !important;
+}
+
+.webview-container {
+  transition: left 0.3s ease, width 0.3s ease !important;
+}
+
+.tab-placeholder {
+  flex: 0 0 auto;
+  height: 32px;
+  margin: 4px 2px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  transition: width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}

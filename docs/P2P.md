@@ -1,0 +1,140 @@
+# P2P Apps
+
+Peersky includes a section of static apps served from the `peersky://p2p/` namespace. These apps are fully local or served via distributed protocols like IPFS, Hypercore, etc. This allows building collaborative and offline-capable tools that do not rely on centralized servers.
+
+## 🛠️ Building P2P static apps
+
+<img src="./images/peersky-p2p-editor.gif" width="639" alt="A demo gif of the PeerSky P2P Editor showing HTML, CSS, and JavaScript panels, a live preview of a blue page with red ‘Spider-Man’ text, and AI code-generation controls">
+
+Static apps work especially well with P2P protocols: they can be **served locally**, cached by peers, and stay available even when your origin server is offline. Publishing a bundle of HTML/CSS/JS to Hyper or IPFS gives you:
+
+- **Offline / flaky-network resilience** – once content is seeded, peers can load it without a central server.
+- **Versioned, content-addressed builds** – immutable URLs for each deploy, easy rollbacks and integrity checks.
+- **Low/zero infra** – no origin to maintain; distribution happens over the P2P network.
+
+### Publish to Hyper
+
+```js
+async function publishToHyper(file) {
+  // Create (or reuse) a Hyperdrive keyed by "myapp"
+  const response = await fetch('hyper://localhost/?key=myapp', {
+    method: 'POST'
+  });
+  const hyperdriveUrl = await response.text(); // e.g. "hyper://abcdef.../"
+
+  // Upload the static file into that drive
+  const uploadUrl = `${hyperdriveUrl}${encodeURIComponent(file.name)}`;
+  const uploadResponse = await fetch(uploadUrl, {
+    method: 'PUT',
+    body: file,
+    headers: { 'Content-Type': file.type || 'text/html' }
+  });
+
+  if (uploadResponse.ok) {
+    console.log('Published to:', uploadUrl);
+    return uploadUrl;
+  }
+}
+```
+
+### Publish to IPFS
+
+```js
+async function publishToIPFS(files) {
+  const formData = new FormData();
+  for (const file of files) {
+    formData.append('file', file, file.name);
+  }
+
+  // Example writable IPFS root; in practice you will use
+  // a CID or path that your node exposes for writes.
+  const response = await fetch('ipfs://bafyaabakaieac/', {
+    method: 'PUT',
+    body: formData
+  });
+
+  if (response.ok) {
+    const ipfsUrl = response.headers.get('Location'); // e.g. "ipfs://bafy.../index.html"
+    console.log('Published to:', ipfsUrl);
+    return ipfsUrl;
+  }
+}
+```
+
+Check our p2p apps in `/pages/p2p/`: https://github.com/p2plabsxyz/peersky-browser/tree/main/src/pages/p2p
+
+## 🤖 LLM-powered P2P apps
+
+To build P2P apps that call a local or cloud LLM from the browser, see [`docs/LLM.md`](./LLM.md) for the `window.llm` API, configuration, and examples.
+
+## ⚡ Real-time P2P apps
+
+Build collaborative real-time apps using [Holesail](https://holesail.io/) for direct peer-to-peer connections with live synchronization.
+
+### 1) Start a Holesail server
+
+```js
+import Holesail from "holesail";
+
+const server = new Holesail({
+  server: true,
+  secure: true,
+  port: 8989
+});
+
+await server.ready();
+console.log("Share this key:", server.info.url);
+```
+
+### 2) Connect a client
+
+```js
+import Holesail from "holesail";
+
+const client = new Holesail({
+  client: true,
+  key: "hs://s000yourkeyhere"
+});
+
+await client.ready();
+console.log("Connected:", client.info);
+```
+
+More: https://docs.holesail.io/
+
+### 3) Sync realtime state
+
+Use HTTP endpoints (GET/POST) plus SSE/WebSocket for live updates. In PeerSky, a custom [hs-handler](https://github.com/p2plabsxyz/peersky-browser/blob/main/src/protocols/hs-handler.js) can expose these endpoints while keeping the transport peer-to-peer.
+
+**Example:** See [p2pmd](https://github.com/p2plabsxyz/peersky-browser/tree/main/src/pages/p2p/p2pmd) for a complete real-time collaborative markdown editor implementation.
+
+## Web3 protocol
+
+For `web3://` examples (contract reads, HTML resources, and `fetch` usage), see [`docs/web3.md`](./web3.md).
+
+## 📄 p2p-list.js
+
+The file [`p2p-list.js`](../src/pages/p2p/p2p-list.js) manages both built-in static apps and user-imported P2P applications.
+It exports the hardcoded `p2pApps` array for built-in apps, and dynamic helper functions to resolve and retrieve apps:
+
+- `getAllApps()`: Returns a combined array of all built-in apps and dynamically uploaded user apps (via IPC).
+- `getPinnedApps()`: Returns an array of pinned app IDs (async, reads from the main-process settings via IPC).
+- `setPinnedState(id, pinned)`: Updates the `pinnedP2PApps` setting. Saving this setting triggers the main process to broadcast a `pinned-apps-changed` event to natively sync the home screen P2P bar dynamically across all windows.
+- `isPinned(id)`: Checks if a specific app is pinned (async).
+
+### Managing apps at peersky://p2p/
+
+![alt text](images/peersky-p2p-registry.png)
+
+The page at `peersky://p2p/` (`pages/p2p/index.html`) serves as the core P2P app management registry. It uses a `<p2p-app-manager>` web component with full drag-and-drop support, displaying a table with columns:
+
+| Icon | Pin / Unpin | App Name | Actions (SVG icon upload, Delete) | Open |
+|---|---|---|---|---|
+
+Pin/unpin changes are persisted via the main-process settings system (`pinnedP2PApps` key), updating the home screen P2P bar dynamically.
+
+**To register a new P2P app:**
+1. **(Users)** Easily drag-and-drop any standard HTML/CSS/JS web folder directly onto the dropzone via the UI. The application gets locally wrapped and assigned a `peersky://myapps/...` protocol URL.
+2. **(Core Developers)** Add the folder for native components in `./src/pages/p2p/`, and explicitly register it into the `p2pApps` list located in `p2p-list.js`.
+
+<!-- TODO: Add section about Git submodules for P2P apps -->

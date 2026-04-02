@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' peersky:; object-src 'none'; style-src 'self' 'unsafe-inline' browser:;">
+  <link rel="icon" type="image/png" href="peersky://static/assets/logo.png" />
+  <style>
+    @import url("browser://theme/index.css");
+    @import url("browser://theme/vars.css");
+    @import url("browser://theme/settings.css");
+    @import url("browser://theme/tabs.css");
+  </style>
+  <title>Settings</title>
+</head>
+<body>
+
+<div class="settings-wrapper">
+  <div class="settings-layout">
+    <!-- Sidebar Navigation -->
+    <nav class="settings-sidebar">
+      <div class="sidebar-header">
+        <h1 class="sidebar-title">Settings</h1>
+      </div>
+      <div class="sidebar-nav">
+        <a href="#appearance" class="nav-item active" data-section="appearance">
+          <img src="peersky://static/assets/svg/palette.svg" class="nav-icon" alt="Appearance Icon">
+          <span>Appearance</span>
+        </a>
+        <a href="#search" class="nav-item" data-section="search">
+          <img src="peersky://static/assets/svg/search.svg" class="nav-icon" alt="Search Icon">
+          <span>Search</span>
+        </a>
+        <a href="peersky://bookmarks" class="nav-item">
+          <img src="peersky://static/assets/svg/bookmark-settings.svg" class="nav-icon" alt="Bookmarks Icon">
+          <span>Bookmarks</span>
+        </a>
+        <a href="#tabs" class="nav-item" data-section="tabs">
+          <img src="peersky://static/assets/svg/folder.svg" class="nav-icon" alt="Tab Group Icon">
+          <span>Tabs</span>
+        </a>
+        <a href="#llm" class="nav-item" data-section="llm">
+          <img src="peersky://static/assets/svg/robot.svg" class="nav-icon" alt="LLM Icon">
+          <span>AI / LLMs</span>
+        </a>
+        <a href="peersky://extensions" class="nav-item">
+          <img src="peersky://static/assets/svg/puzzle.svg" class="nav-icon" alt="Extensions Icon">
+          <span>Extensions</span>
+        </a>
+        <a href="#archive" class="nav-item" data-section="archive">
+          <img src="peersky://static/assets/svg/folder.svg" class="nav-icon" alt="Archive Icon">
+          <span>Archive</span>
+        </a>
+        <a href="peersky://history" target="_blank" rel="noopener noreferrer" class="nav-item">
+          <img src="peersky://static/assets/svg/clock-history.svg" class="nav-icon" alt="Clock History Icon">
+          <span>History</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- Content Area -->
+    <main class="settings-content">
+      <!-- Appearance Section -->
+      <div id="appearance-section" class="settings-page active">
+        <h1 class="section-title">Appearance</h1>
+        
+        <section class="settings-section">
+          <div class="setting-row">
+            <div class="setting-label">Color theme</div>
+            <div class="setting-control">
+              <div class="custom-select" id="theme-select">
+                <div class="select-display" data-value="dark">Dark</div>
+                <div class="select-dropdown">
+                  <div class="select-option" data-value="transparent">Transparent</div>
+                  <div class="select-option" data-value="light">Light</div>
+                  <div class="select-option" data-value="dark">Dark</div>
+                  <div class="select-option" data-value="green">Green</div>
+                  <div class="select-option" data-value="cyan">Cyan</div>
+                  <div class="select-option" data-value="yellow">Yellow</div>
+                  <div class="select-option" data-value="violet">Violet</div>
+                </div>
+              </div>
+              <input type="hidden" id="theme-toggle" value="dark">
+            </div>
+          </div>
+          
+          <div class="setting-row">
+            <div class="setting-label">Built-in wallpapers</div>
+            <div class="setting-control">
+              <div class="custom-select" id="wallpaper-select">
+                <div class="select-display" data-value="ten_lakes">Ten Lakes</div>
+                <div class="select-dropdown">
+                  <!-- Options dynamically loaded from wallpaper/defaults/ -->
+                </div>
+              </div>
+              <input type="hidden" id="wallpaper-selector" value="ten_lakes">
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Custom wallpaper</div>
+            <div class="setting-control">
+              <input type="file" id="wallpaper-file" class="file-input" accept="image/*" style="display: none;">
+              <button type="button" id="wallpaper-browse" class="btn btn-secondary">Choose Image</button>
+              <button type="button" id="wallpaper-remove" class="btn btn-danger" style="display: none;">Remove Custom</button>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Show clock on home page</div>
+            <div class="setting-control">
+              <label class="toggle-label">
+                <input type="checkbox" id="show-clock" class="toggle-input">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Clock format</div>
+            <div class="setting-control">
+              <div class="custom-select" id="clock-format-select">
+                <div class="select-display" data-value="24h">24-hour</div>
+                <div class="select-dropdown">
+                  <div class="select-option" data-value="24h">24-hour</div>
+                  <div class="select-option" data-value="12h">12-hour</div>
+                </div>
+              </div>
+              <input type="hidden" id="clock-format" value="24h">
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Search Section -->
+      <div id="search-section" class="settings-page">
+        <h1 class="section-title">Search Engine</h1>
+        
+        <section class="settings-section">
+          <div class="setting-row">
+            <div class="setting-label">Default search engine</div>
+            <div class="setting-control">
+              <div class="custom-select" id="search-engine-select">
+                <div class="select-display" data-value="duckduckgo_noai">DuckDuckGo (No AI)</div>
+                <div class="select-dropdown">
+                  <div class="select-option" data-value="duckduckgo_noai">DuckDuckGo (No AI)</div>
+                  <div class="select-option" data-value="duckduckgo">DuckDuckGo (AI)</div>
+                  <div class="select-option" data-value="brave">Brave Search</div>
+                  <div class="select-option" data-value="ecosia">Ecosia</div>
+                  <div class="select-option" data-value="kagi">Kagi</div>
+                  <div class="select-option" data-value="startpage">Startpage</div>
+                  <div class="select-option" data-value="custom">Custom</div>
+                </div>
+              </div>
+              <input type="hidden" id="search-engine" value="duckduckgo_noai">
+            </div>
+          </div>
+
+          <div
+            class="setting-row tall-row"
+            id="custom-search-row"
+            style="display: none"
+          >
+            <div class="setting-label">Custom search URL</div>
+            <div class="setting-control">
+              <input
+                type="text"
+                id="custom-search-template"
+                class="text-input input-fill"
+                placeholder="https://example.com/search?q=%s"
+                autocomplete="off"
+              />
+              <div id="custom-search-message" class="help-or-error">
+                Use <code>%s</code> where the query should go.
+              </div>
+            </div>
+          </div>
+
+          <!-- Browser cache only -->
+          <div class="setting-row">
+            <div class="setting-label">Clear browser cache</div>
+            <div class="setting-control">
+              <button type="button" id="clear-browser-cache" class="btn btn-danger">
+                Clear Cache
+              </button>
+              
+            </div>
+          </div>
+
+          <!-- P2P reset (identities preserved by default) -->
+          <div class="setting-row tall-row">
+            <div class="setting-label">Reset P2P data</div>
+            <div class="setting-control">
+              <button type="button" id="reset-p2p" class="btn btn-warning">Reset P2P Data</button>         
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- LLM Section -->
+      <div id="llm-section" class="settings-page">
+        <h1 class="section-title">AI / LLMs</h1>
+        
+        <section class="settings-section">
+          <div class="setting-row">
+            <div class="setting-label">Enable LLM API</div>
+            <div class="setting-control">
+              <label class="toggle-label">
+                <input type="checkbox" id="llm-enabled" class="toggle-input">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+        
+        <div id="llm-config" style="display: none;">
+          <section class="settings-section">
+            <div class="setting-row">
+              <div class="setting-label">Server URL</div>
+              <div class="setting-control">
+                <input type="text" id="ollama-url" class="setting-input" placeholder="http://127.0.0.1:11434/" value="http://127.0.0.1:11434/">
+                <div class="setting-hint">
+                  Ollama: <code>http://127.0.0.1:11434/</code> or OpenRouter: <code>https://openrouter.ai/api/v1/</code>
+                </div>
+              </div>
+            </div>
+            
+            <div class="setting-row">
+              <div class="setting-label">API Key</div>
+              <div class="setting-control">
+                <div class="api-key-input-group">
+                  <input type="text" id="api-key" class="setting-input" placeholder="ollama for local, or your OpenRouter API key" value="ollama">
+                  <img id="toggle-api-key-visibility" src="peersky://static/assets/svg/eye.svg" class="api-key-toggle-icon" alt="Toggle visibility" title="Show/Hide API key">
+                </div>
+                <div class="setting-hint">
+                  Use <code>ollama</code> for local models or your OpenRouter API key for cloud models (e.g. <code>sk-or-...</code>)
+                </div>
+              </div>
+            </div>
+            
+            <div class="setting-row">
+              <div class="setting-label">Model Name</div>
+              <div class="setting-control">
+                <input type="text" id="ollama-model" class="setting-input" placeholder="e.g. qwen2.5-coder:3b or anthropic/claude-4.5-sonnet" value="qwen2.5-coder:3b">
+              </div>
+            </div>
+          </section>
+          
+          <h1 class="section-title" id="llm-setup-title">Setup</h1>
+          <section class="settings-section" id="llm-setup-section">
+            <div class="setting-info">
+              <p>Install Ollama: <a href="https://ollama.com/download" target="_blank">ollama.com/download</a></p>
+              <p>Pull a model: <code>ollama pull qwen2.5-coder:3b</code></p>
+              <p>Remove a model: <code>ollama rm qwen2.5-coder:3b</code></p>
+              <p>Browse Ollama models at: <a href="https://ollama.com/library" target="_blank">ollama.com/library</a></p>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- Extensions Section -->
+      <div id="extensions-section" class="settings-page">
+        <h1 class="section-title">Extensions</h1>
+        
+        <section class="settings-section">
+          <div class="coming-soon-notice">
+            Extension support coming soon
+          </div>
+          
+          <div class="extension-row">
+            <div class="extension-info">
+              <div class="extension-name">Ad Blocker</div>
+              <div class="extension-status">Coming soon</div>
+            </div>
+            <div class="extension-toggle">
+              <label class="toggle-label">
+                <input type="checkbox" class="toggle-input" disabled>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="extension-row">
+            <div class="extension-info">
+              <div class="extension-name">DScan</div>
+              <div class="extension-status">Coming soon</div>
+            </div>
+            <div class="extension-toggle">
+              <label class="toggle-label">
+                <input type="checkbox" class="toggle-input" disabled>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+      </div>
+      <!-- Tabs Section -->
+      <div id="tabs-section" class="settings-page">
+        <h1 class="section-title">Tabs</h1>
+
+        <section class="settings-section">
+          <div class="setting-row">
+            <div class="setting-label">Enable vertical tabs</div>
+            <div class="setting-control">
+              <label class="toggle-label">
+                <input type="checkbox" id="vertical-tabs" class="toggle-input">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Keep tabs expanded</div>
+            <div class="setting-control">
+              <label class="toggle-label">
+                <input type="checkbox" id="keep-tabs-expanded" class="toggle-input">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+        <tabs-box style="width:100%;"></tabs-box>
+      </div>
+      <!-- Archive Section -->
+      <!-- TODO: Add pagination with search bar at top - if more than 10 rows then it will move to another page (we can have a reusable web component for this?) -->
+      <div id="archive-section" class="settings-page">
+        <h1 class="section-title">Archive</h1>
+
+        <div class="archive-filter-bar">
+          <span class="filter-label">Time</span>
+          <select id="export-time-filter">
+            <option value="15m">Last 15 minutes</option>
+            <option value="1h">Last 1 hour</option>
+            <option value="1d">Last 1 day</option>
+            <option value="1w">Last 1 week</option>
+            <option value="all" selected>All time</option>
+          </select>
+          <div class="filter-actions">
+            <button id="export-archive-btn" class="btn btn-secondary">Export as JSON</button>
+            <button id="clear-archive-btn" class="btn btn-danger">Clear All</button>
+          </div>
+        </div>
+
+        <p class="archive-note">This page is for discoverability of your published P2P data. Archive only clears your history of Hyperdrives/IPFS uploads/ENS lookups. To clear the underlying P2P data (IPFS blocks, Hyperdrive storage, etc.), go to <a href="peersky://settings/search" class="archive-note-link">peersky://settings/search</a> and use Reset P2P Data.</p>
+
+        <div class="archive-subsection">
+          <span class="archive-subsection-label">Hyperdrives</span>
+          <div id="hyper-archive-list">
+            <p class="archive-empty">Loading...</p>
+          </div>
+        </div>
+
+        <div class="archive-subsection">
+          <span class="archive-subsection-label">IPFS Uploads</span>
+          <div id="ipfs-archive-list">
+            <p class="archive-empty">Loading...</p>
+          </div>
+        </div>
+
+        <div class="archive-subsection">
+          <span class="archive-subsection-label">ENS Cache</span>
+          <div id="ens-archive-list">
+            <p class="archive-empty">Loading...</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="peersky://static/js/tabs.js" type="module"></script>
+<script src="peersky://static/js/archive.js" defer></script>
+<script src="peersky://static/js/settings.js" defer></script>
+</body>
+</html> 
