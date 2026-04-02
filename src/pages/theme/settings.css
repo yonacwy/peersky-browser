@@ -1043,3 +1043,74 @@ html[data-theme="light"] .archive-hash {
 .archive-note-link:hover {
   text-decoration: underline;
 }
+
+/* IPFS Settings Section */
+#ipfs-section .settings-section {
+  margin-bottom: 1.5rem;
+}
+
+#ipfs-section .setting-control {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+#ipfs-section .setting-control select,
+#ipfs-section .setting-control input {
+  width: 100%;
+  margin-bottom: 0.25rem;
+}
+
+#ipfs-section .setting-control button {
+  margin-top: 0.25rem;
+}
+
+.keys-list {
+  background: var(--settings-bg-secondary);
+  border: 1px solid var(--settings-border);
+  border-radius: 4px;
+  padding: 0.75rem;
+  min-height: 60px;
+  max-height: 200px;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.keys-empty {
+  color: var(--settings-text-secondary);
+  font-size: 0.85rem;
+  text-align: center;
+  margin: 0;
+}
+
+.resolve-result {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: var(--settings-bg-secondary);
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.85rem;
+  word-break: break-all;
+  width: 100%;
+}
+
+/* w3name specific styles */
+#w3name-section .api-key-input-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+#w3name-section .api-key-input-group input {
+  flex: 1;
+}
+
+.subsection-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--settings-text-primary);
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--settings-border);
+}

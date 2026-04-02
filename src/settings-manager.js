@@ -645,7 +645,18 @@ class SettingsManager {
         if (typeof v.model !== 'string') return false;
         
         return true;
-      }
+      },
+      ipnsProvider: (v) => ['native', 'w3name'].includes(v),
+      ipfs: (v) => {
+        if (typeof v !== 'object' || v === null) return false;
+        // Allow partial updates - only validate fields that are present
+        if ('enabled' in v && typeof v.enabled !== 'boolean') return false;
+        if ('gateway' in v && typeof v.gateway !== 'string') return false;
+        if ('apiUrl' in v && typeof v.apiUrl !== 'string') return false;
+        if ('localPin' in v && typeof v.localPin !== 'boolean') return false;
+        return true;
+      },
+      w3nameToken: (v) => typeof v === 'string' && v.length < 2048
     };
     
     const validator = validators[key];

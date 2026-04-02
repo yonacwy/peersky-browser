@@ -591,6 +591,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Initialize LLM settings handlers
   initializeLLMSettings();
   
+  // Initialize IPFS settings handlers
+  initializeIPFSSettings();
+  
   // Load settings from backend
   loadSettingsFromBackend();
 });
@@ -745,6 +748,45 @@ function populateFormFields(settings) {
     }
   }
   
+  // Populate IPFS settings
+  if (settings.ipfs) {
+    const ipfsEnabled = document.getElementById('ipfs-enabled');
+    const ipfsGateway = document.getElementById('ipfs-gateway');
+    const ipfsApiUrl = document.getElementById('ipfs-api-url');
+    const ipfsLocalPin = document.getElementById('ipfs-local-pin');
+    
+    if (ipfsEnabled) ipfsEnabled.checked = settings.ipfs.enabled || false;
+    if (ipfsGateway && settings.ipfs.gateway) ipfsGateway.value = settings.ipfs.gateway;
+    if (ipfsApiUrl && settings.ipfs.apiUrl) ipfsApiUrl.value = settings.ipfs.apiUrl;
+    if (ipfsLocalPin) ipfsLocalPin.checked = settings.ipfs.localPin || false;
+  }
+  
+  // Populate IPNS provider settings
+  if (settings.ipnsProvider) {
+    const ipnsProvider = document.getElementById('ipns-provider');
+    const nativeSection = document.getElementById('native-ipns-section');
+    const w3nameSection = document.getElementById('w3name-section');
+    
+    if (ipnsProvider) {
+      ipnsProvider.value = settings.ipnsProvider;
+      
+      // Show/hide appropriate sections
+      if (settings.ipnsProvider === 'w3name') {
+        if (nativeSection) nativeSection.style.display = 'none';
+        if (w3nameSection) w3nameSection.style.display = 'block';
+      } else {
+        if (nativeSection) nativeSection.style.display = 'block';
+        if (w3nameSection) w3nameSection.style.display = 'none';
+      }
+    }
+  }
+  
+  // Populate w3name token
+  if (settings.w3nameToken) {
+    const w3nameToken = document.getElementById('w3name-token');
+    if (w3nameToken) w3nameToken.value = settings.w3nameToken;
+  }
+  
   // Update custom dropdown displays after loading settings
   updateCustomDropdownDisplays();
   
@@ -875,7 +917,7 @@ function initializeSidebarNavigation() {
   // Check for hash-based navigation (backward compatibility)
   else if (currentPath.includes('#')) {
     const hashSection = currentPath.replace('#', '');
-    if (hashSection && ['appearance', 'search','tabs', 'extensions', 'archive'].includes(hashSection)) {
+    if (hashSection && ['appearance', 'search','tabs', 'extensions', 'archive', 'ipfs'].includes(hashSection)) {
       targetSection = hashSection;
     }
   }
@@ -1574,6 +1616,205 @@ function initializeLLMSettings() {
       console.error('Error checking for incomplete downloads:', error);
     }
   }
+}
+
+// Initialize IPFS settings handlers
+function initializeIPFSSettings() {
+  const ipfsEnabled = document.getElementById('ipfs-enabled');
+  const ipfsGateway = document.getElementById('ipfs-gateway');
+  const ipfsApiUrl = document.getElementById('ipfs-api-url');
+  const ipfsLocalPin = document.getElementById('ipfs-local-pin');
+  const ipnsProvider = document.getElementById('ipns-provider');
+  const nativeSection = document.getElementById('native-ipns-section');
+  const w3nameSection = document.getElementById('w3name-section');
+  
+  // IPFS basic settings
+  ipfsEnabled?.addEventListener('change', async (e) => {
+    await saveSettingToBackend('ipfs', { ...await getIPFSSettings(), enabled: e.target.checked });
+  });
+  
+  ipfsGateway?.addEventListener('change', async (e) => {
+    await saveSettingToBackend('ipfs', { ...await getIPFSSettings(), gateway: e.target.value });
+  });
+  
+  ipfsApiUrl?.addEventListener('change', async (e) => {
+    await saveSettingToBackend('ipfs', { ...await getIPFSSettings(), apiUrl: e.target.value });
+  });
+  
+  ipfsLocalPin?.addEventListener('change', async (e) => {
+    await saveSettingToBackend('ipfs', { ...await getIPFSSettings(), localPin: e.target.checked });
+  });
+  
+  // Helper to get current IPFS settings
+  async function getIPFSSettings() {
+    try {
+      const settings = await settingsAPI?.settings?.getAll?.() || {};
+      return settings.ipfs || {};
+    } catch (e) {
+      return {};
+    }
+  }
+  
+  // Initialize IPNS provider section visibility
+  function updateIPNSProviderVisibility() {
+    const provider = ipnsProvider?.value || 'native';
+    
+    if (!nativeSection || !w3nameSection) return;
+    
+    if (provider === 'w3name') {
+      nativeSection.style.display = 'none';
+      w3nameSection.style.display = 'block';
+    } else {
+      nativeSection.style.display = 'block';
+      w3nameSection.style.display = 'none';
+    }
+  }
+  
+  // Initial visibility update
+  updateIPNSProviderVisibility();
+  
+  if (!ipnsProvider) return; // IPFS section not present
+  
+  // Handle provider switching
+  ipnsProvider.addEventListener('change', (e) => {
+    updateIPNSProviderVisibility();
+    saveSettingToBackend('ipnsProvider', e.target.value);
+  });
+  
+  // Toggle visibility for w3name token
+  const w3nameToken = document.getElementById('w3name-token');
+  const toggleW3nameToken = document.getElementById('toggle-w3name-token');
+  
+  if (toggleW3nameToken && w3nameToken) {
+    toggleW3nameToken.addEventListener('click', () => {
+      if (w3nameToken.type === 'password') {
+        w3nameToken.type = 'text';
+        toggleW3nameToken.src = 'peersky://static/assets/svg/eye-slash.svg';
+      } else {
+        w3nameToken.type = 'password';
+        toggleW3nameToken.src = 'peersky://static/assets/svg/eye.svg';
+      }
+    });
+  }
+  
+  // Save token on change
+  w3nameToken?.addEventListener('change', () => {
+    saveSettingToBackend('w3nameToken', w3nameToken.value);
+  });
+  
+  // Generate w3name button
+  const createW3nameBtn = document.getElementById('create-w3name');
+  createW3nameBtn?.addEventListener('click', async () => {
+    const token = document.getElementById('w3name-token')?.value;
+    if (!token) {
+      showSettingsSavedMessage('Please enter w3name API token first', 'error');
+      return;
+    }
+    
+    showSettingsSavedMessage('Creating w3name...', 'warning');
+    
+    try {
+      // This would call the w3name library in the main process
+      if (window.electronAPI?.ipfs?.createW3Name) {
+        const result = await window.electronAPI.ipfs.createW3Name(token);
+        if (result.success) {
+          showSettingsSavedMessage(`w3name created: ${result.name}`, 'success');
+          // Refresh w3name list
+          loadW3NameList();
+        } else {
+          throw new Error(result.error);
+        }
+      } else {
+        showSettingsSavedMessage('w3name not available in this build', 'error');
+      }
+    } catch (err) {
+      showSettingsSavedMessage(`Failed to create w3name: ${err.message}`, 'error');
+    }
+  });
+  
+  // Update w3name button
+  const updateW3nameBtn = document.getElementById('update-w3name');
+  updateW3nameBtn?.addEventListener('click', async () => {
+    const name = document.getElementById('w3name-select')?.value;
+    const cid = document.getElementById('w3name-cid-input')?.value;
+    
+    if (!name || !cid) {
+      showSettingsSavedMessage('Please select a name and enter a CID', 'error');
+      return;
+    }
+    
+    showSettingsSavedMessage('Updating w3name...', 'warning');
+    
+    try {
+      if (window.electronAPI?.ipfs?.updateW3Name) {
+        const result = await window.electronAPI.ipfs.updateW3Name(name, cid);
+        if (result.success) {
+          showSettingsSavedMessage('w3name updated successfully', 'success');
+        } else {
+          throw new Error(result.error);
+        }
+      } else {
+        showSettingsSavedMessage('w3name not available in this build', 'error');
+      }
+    } catch (err) {
+      showSettingsSavedMessage(`Failed to update w3name: ${err.message}`, 'error');
+    }
+  });
+  
+  // Resolve w3name button
+  const resolveW3nameBtn = document.getElementById('resolve-w3name');
+  resolveW3nameBtn?.addEventListener('click', async () => {
+    const name = document.getElementById('w3name-resolve-input')?.value;
+    if (!name) {
+      showSettingsSavedMessage('Please enter a w3name to resolve', 'error');
+      return;
+    }
+    
+    const resultDiv = document.getElementById('w3name-resolve-result');
+    resultDiv.textContent = 'Resolving...';
+    
+    try {
+      if (window.electronAPI?.ipfs?.resolveW3Name) {
+        const result = await window.electronAPI.ipfs.resolveW3Name(name);
+        if (result.success) {
+          resultDiv.textContent = `CID: ${result.cid}`;
+        } else {
+          resultDiv.textContent = `Error: ${result.error}`;
+        }
+      } else {
+        resultDiv.textContent = 'w3name not available in this build';
+      }
+    } catch (err) {
+      resultDiv.textContent = `Error: ${err.message}`;
+    }
+  });
+  
+  // Load w3name list
+  async function loadW3NameList() {
+    const listDiv = document.getElementById('w3name-list');
+    const select = document.getElementById('w3name-select');
+    
+    try {
+      if (window.electronAPI?.ipfs?.getW3Names) {
+        const result = await window.electronAPI.ipfs.getW3Names();
+        if (result.success && result.names?.length > 0) {
+          listDiv.innerHTML = result.names.map(n => 
+            `<div class="key-item">${n.name} → ${n.cid?.substring(0, 20)}...</div>`
+          ).join('');
+          
+          select.innerHTML = '<option value="">Select name...</option>' +
+            result.names.map(n => `<option value="${n.name}">${n.name}</option>`).join('');
+        } else {
+          listDiv.innerHTML = '<p class="keys-empty">No w3names created yet</p>';
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load w3names:', err);
+    }
+  }
+  
+  // Load initial list
+  loadW3NameList();
 }
 
 // Gracefully detach webviews before clearing

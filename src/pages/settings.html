@@ -56,6 +56,10 @@
           <img src="peersky://static/assets/svg/clock-history.svg" class="nav-icon" alt="Clock History Icon">
           <span>History</span>
         </a>
+        <a href="#ipfs" class="nav-item" data-section="ipfs">
+          <img src="peersky://static/assets/svg/folder.svg" class="nav-icon" alt="IPFS Icon">
+          <span>IPFS</span>
+        </a>
       </div>
     </nav>
 
@@ -364,6 +368,237 @@
             <p class="archive-empty">Loading...</p>
           </div>
         </div>
+      </div>
+
+      <!-- IPFS Section -->
+      <div id="ipfs-section" class="settings-page">
+        <h1 class="section-title">IPFS Settings</h1>
+        
+        <!-- IPFS Configuration -->
+        <section class="settings-section">
+          <h2 class="subsection-title">IPFS</h2>
+          
+          <div class="setting-row">
+            <div class="setting-label">Enable IPFS</div>
+            <div class="setting-control">
+              <label class="toggle-label">
+                <input type="checkbox" id="ipfs-enabled" class="toggle-input">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">IPFS Gateway</div>
+            <div class="setting-control">
+              <input type="text" id="ipfs-gateway" class="setting-input" placeholder="https://ipfs.io/ipfs/" value="https://ipfs.io/ipfs/">
+              <div class="setting-hint">
+                Default gateway for fetching IPFS content
+              </div>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Local IPFS API</div>
+            <div class="setting-control">
+              <input type="text" id="ipfs-api-url" class="setting-input" placeholder="http://127.0.0.1:5001/api/v0" value="http://127.0.0.1:5001/api/v0">
+              <div class="setting-hint">
+                Kubo API endpoint for local node operations
+              </div>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Pin uploads to local node</div>
+            <div class="setting-control">
+              <label class="toggle-label">
+                <input type="checkbox" id="ipfs-local-pin" class="toggle-input">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- IPNS Configuration -->
+        <section class="settings-section">
+          <h2 class="subsection-title">IPNS Provider</h2>
+          
+          <div class="setting-row">
+            <div class="setting-label">IPNS Provider</div>
+            <div class="setting-control">
+              <div class="custom-select" id="ipns-provider-select">
+                <div class="select-display" data-value="native">Native IPFS (Kubo)</div>
+                <div class="select-dropdown">
+                  <div class="select-option" data-value="native">Native IPFS (Kubo)</div>
+                  <div class="select-option" data-value="w3name">w3name (Web3.storage)</div>
+                </div>
+              </div>
+              <input type="hidden" id="ipns-provider" value="native">
+              <div class="setting-hint">
+                Choose between local Kubo node or w3name service
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Native IPNS Configuration -->
+        <section class="settings-section" id="native-ipns-section">
+          <h2 class="subsection-title">Native IPNS (Kubo)</h2>
+          
+          <div class="setting-row">
+            <div class="setting-label">Generate IPNS Key</div>
+            <div class="setting-control">
+              <button type="button" id="generate-ipns-key" class="btn btn-secondary">Generate New Key</button>
+              <div class="setting-hint">
+                Create a new IPNS key for publishing mutable pointers
+              </div>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">IPNS Keys</div>
+            <div class="setting-control">
+              <div id="ipns-keys-list" class="keys-list">
+                <p class="keys-empty">No IPNS keys generated yet</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Publish to IPNS</div>
+            <div class="setting-control">
+              <select id="ipns-key-select" class="setting-select">
+                <option value="">Select key...</option>
+              </select>
+              <input type="text" id="ipns-cid-input" class="setting-input" placeholder="Enter CID to publish">
+              <button type="button" id="publish-ipns" class="btn btn-secondary">Publish</button>
+              <div class="setting-hint">
+                Publish a CID to an IPNS name for mutable addressing
+              </div>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Resolve IPNS Name</div>
+            <div class="setting-control">
+              <input type="text" id="ipns-resolve-input" class="setting-input" placeholder="/ipns/k51qzi5uqu5d...">
+              <button type="button" id="resolve-ipns" class="btn btn-secondary">Resolve</button>
+              <div id="ipns-resolve-result" class="resolve-result"></div>
+              <div class="setting-hint">
+                Track and resolve immutable names to their current CID
+              </div>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Republish interval (hours)</div>
+            <div class="setting-control">
+              <input type="number" id="ipns-republish-interval" class="setting-input" value="24" min="1" max="168">
+              <div class="setting-hint">
+                How often to republish IPNS records (IPNS entries expire after ~24 hours)
+              </div>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Signed updates</div>
+            <div class="setting-control">
+              <label class="toggle-label">
+                <input type="checkbox" id="ipns-signed-updates" class="toggle-input" checked>
+                <span class="toggle-slider"></span>
+              </label>
+              <div class="setting-hint">
+                Require signed updates for IPNS name changes
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- w3name Configuration -->
+        <section class="settings-section" id="w3name-section" style="display: none;">
+          <h2 class="subsection-title">w3name (Web3.storage)</h2>
+          
+          <div class="setting-row">
+            <div class="setting-label">w3name API Token</div>
+            <div class="setting-control">
+              <div class="api-key-input-group">
+                <input type="password" id="w3name-token" class="setting-input" placeholder="w3s.XXX...">
+                <img id="toggle-w3name-token" src="peersky://static/assets/svg/eye.svg" class="api-key-toggle-icon" alt="Toggle visibility">
+              </div>
+              <div class="setting-hint">
+                Get token from <a href="https://web3.storage" target="_blank">web3.storage</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="setting-row">
+            <div class="setting-label">Create w3name</div>
+            <div class="setting-control">
+              <button type="button" id="create-w3name" class="btn btn-secondary">Create New Name</button>
+              <div class="setting-hint">
+                Generate a new mutable w3name (IPNS name via Web3.storage)
+              </div>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">My w3names</div>
+            <div class="setting-control">
+              <div id="w3name-list" class="keys-list">
+                <p class="keys-empty">No w3names created yet</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Update w3name</div>
+            <div class="setting-control">
+              <select id="w3name-select" class="setting-select">
+                <option value="">Select name...</option>
+              </select>
+              <input type="text" id="w3name-cid-input" class="setting-input" placeholder="Enter CID to publish (e.g., bafybei...)">
+              <button type="button" id="update-w3name" class="btn btn-secondary">Update</button>
+              <div class="setting-hint">
+                Publish a signed update to point the name to a new CID
+              </div>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Resolve w3name</div>
+            <div class="setting-control">
+              <input type="text" id="w3name-resolve-input" class="setting-input" placeholder="k51qzi5uqu5d...">
+              <button type="button" id="resolve-w3name" class="btn btn-secondary">Resolve</button>
+              <div id="w3name-resolve-result" class="resolve-result"></div>
+              <div class="setting-hint">
+                Resolve a w3name to its current CID with signed record verification
+              </div>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Auto-republish</div>
+            <div class="setting-control">
+              <label class="toggle-label">
+                <input type="checkbox" id="w3name-autorepublish" class="toggle-input" checked>
+                <span class="toggle-slider"></span>
+              </label>
+              <div class="setting-hint">
+                w3name automatically handles republishing (no 24hr expiry issues)
+              </div>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">Export signing key</div>
+            <div class="setting-control">
+              <button type="button" id="export-w3name-key" class="btn btn-secondary">Export Key</button>
+              <div class="setting-hint">
+                Export w3name signing key for backup
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </main>
   </div>
